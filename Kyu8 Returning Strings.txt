@@ -1,0 +1,20 @@
+/* description 
+
+Make a function that will return a greeting statement that uses an input; your program should return, "Hello, <name> how are you doing today?".
+
+[Make sure you type the exact thing I wrote or the program may not execute properly]
+
+*/
+
+solution : 
+
+function greet(name){
+
+   return (`Hello, ${name} how are you doing today?`)
+}
+
+
+//parameter : name ${}  dollar sign with curly curly bracket , ${} is a placeholder that is used in template literals.  The expression used inside ${} is executed at runtime, and its output is passed as a string to template literals.
+//return : let change " " double quote to backquote and return the program request it . 
+//example : 
+//pesdo code : change to "" to `` and put parameter inside ${}.
