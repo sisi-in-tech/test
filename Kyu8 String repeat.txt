@@ -1,0 +1,44 @@
+/* description 
+
+String repeat
+Write a function called repeatStr which repeats the given string string exactly n times.
+
+repeatStr(6, "I") // "IIIIII"
+repeatStr(5, "Hello") // "HelloHelloHelloHelloHello"
+
+*/
+
+solution 1 : 
+
+const repeatStr = (n, s)=>s.repeat(n)
+
+
+solution 2 : 
+
+function repeatStr(n, s){
+   return s.repeat(n)
+}
+
+solution 3 : 
+
+function repeatStr(n, s){
+    let str = ''
+    for (let i = 0 ; i <n ; i++){
+      str += s 
+    }
+     return str 
+}
+
+
+P.R.E.P
+
+//paremeter 
+// create paremeter n and s , repeats the given string string exactly n times
+
+//return 
+//it will return how many times repeat the string 
+
+//example 
+//for example : function named repeatSti ( 6, 'I') , so it will run six times 'I'
+
+//pesdo code 
