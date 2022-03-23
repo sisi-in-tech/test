@@ -1,0 +1,51 @@
+7kyu Check to see if a string has the same amount of 'x's and 'o's. The method must return a boolean and be case insensitive. The string can contain any char.(character) 
+
+Examples input/output:
+
+XO("ooxx") => true
+XO("xooxx") => false
+XO("ooxXm") => true
+XO("zpzpzpp") => true // when no 'x' and 'o' is present should return true
+XO("zzoo") => false
+
+
+
+
+solution 1 : 
+
+const XO = str => {
+  str = str.toLowerCase().split('');
+  return str.filter(x => x === 'x').length === str.filter(x => x === 'o').length;
+}
+
+
+solution 2 : 
+
+
+function XO(str) {
+    return str.toLowerCase().split('x').length === str.toLowerCase().split('o').length;
+}
+
+
+P.R.E.P
+
+// Parameter : 
+//This question request a check to see if a string has the same amount of two of the letter, so I ‘ll create a parameter name str  .
+
+//return  : 
+For this question, I need to return ‘x’s and ‘o’s, which have the same amount; for calculating the amount, we need to know the character’s length,  and make sure they are all lower case letters.
+ 
+//example : 
+For example , ‘xxoo’=== true 
+                         ‘xxooxxoo’===true 
+                         ‘zzeeeppp’===true 
+If this string does not have with any characters ‘x’and ‘o’ , it’s true, or if this string has the same amount of ‘x’s and ‘o’s , it’s true. 
+
+//pesdo code : 
+
+Create a function name is XO with a parameter named str 
+Turn to all lowercase characters and, split the characters in this string, calculate the characters’ length 
+
+function XO(str) {
+    return str.toLowerCase().split('x').length === str.toLowerCase().split('o').length;
+}
