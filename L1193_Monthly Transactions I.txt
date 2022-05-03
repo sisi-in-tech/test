@@ -48,6 +48,7 @@ Output:
 
 */
 
+MS SQL : 
 SELECT LEFT (trans_date, 7)AS month , 
        country , 
        count(*)as trans_count , 

@@ -47,7 +47,7 @@ Output:
 Explanation: The orders with delivery id 2 and 3 are immediate while the others are scheduled.
 */
 
-JavaScript: 
+MSSQL : 
 
 select convert (decimal (18, 2),
     round(
