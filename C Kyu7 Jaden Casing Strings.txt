@@ -1,0 +1,58 @@
+/* description 
+
+Jaden Casing Strings
+
+Jaden Smith, the son of Will Smith, is the star of films such as The Karate Kid (2010) and After Earth (2013). Jaden is also known for some of his philosophy that he delivers via Twitter. When writing on Twitter, he is known for almost always capitalizing every word. For simplicity, you'll have to capitalize each word, check out how contractions are expected to be in the example below.
+
+Your task is to convert strings to how they would be written by Jaden Smith. The strings are actual quotes from Jaden Smith, but they are not capitalized in the same way he originally typed them.
+
+Example:
+
+Not Jaden-Cased: "How can mirrors be real if our eyes aren't real"
+Jaden-Cased:     "How Can Mirrors Be Real If Our Eyes Aren't Real"
+*/
+
+JavaScript : 
+
+solution1 : 
+
+String.prototype.toJadenCase = function() {
+    return this.split(" ").map((word) => {
+        return word[0].toUpperCase() + word.slice(1);
+    }).join(" ");
+};
+
+
+solution2 : 
+
+String.prototype.toJadenCase = function () {
+  return this.split(" ").map(function(word){
+    return word.charAt(0).toUpperCase() + word.slice(1)
+}).join(" ")
+};
+
+
+P.R.E.P
+//parameter 
+this quesations need to split the frist letter from each word , change each frist character to upper case, and then join the rest of words . 
+so I'll create parameter word and use string .split to split the frist character , use .toUpperCase() to change the frist character to capital letter . 
+
+//return 
+return the sentence each of word frist character is bigger letter . 
+
+//example 
+
+the first word 'How' 
+split this word H with the rest o and w , change the letter h to upper case and link the rest of word , and then join space . 
+
+//pesode code 
+
+// create function 
+String.prototype.toJadenCase = function() {
+// split the words , and create a new function 
+    return this.split(" ").map((word) => {
+// return each of words start with uppercase and use space to sperate each of words .
+        return word[0].toUpperCase() + word.slice(1);
+    }).join(" ");
+};
+
