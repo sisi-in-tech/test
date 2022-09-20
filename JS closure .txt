@@ -1,0 +1,31 @@
+// a closure in JavaScript 
+
+const value = 1 
+
+function doSomething(){
+
+	let data = [1, 2, 3, 4, 5, 6, 7, 8, 9. 10, 11]
+
+	return data.filter(item => item % value === 0 )
+
+}
+
+/*  use the value of the variable value that was defined outside of the function itself 
+
+function(item){
+
+	return item % value === 0 
+
+}
+
+
+
+*/
+
+Functions that read variables inside other functions.
+
+A function defined inside a function
+
+In essence, a closure is a bridge between the inside of the function and the outside of the function.
+
+Closures can be used in many places. It has two biggest uses, one is to read the variables inside the function mentioned above, and the other is to keep the values ​​of these variables in memory all the time.
