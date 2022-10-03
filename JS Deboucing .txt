@@ -1,0 +1,28 @@
+//Debouncing in JavaScript
+//Create a simple input field in index.html like this:
+
+<input type='text' id='text' />
+//Now, in index.js. Don't forget to add it to index.html first:
+
+const getData = (e) => {
+  console.log(e.target.value)
+}
+const inputField = document.getElementById('text')
+
+const debounce = function (fn, delay) {
+  let timer
+  return function () {
+    let context = this
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      fn.apply(context, arguments)
+    }, delay)
+  }
+}
+
+inputField.addEventListener('keyup', debounce(getData, 300))
+
+//First, we have selected the input and added an event listener to it. Then we created a debounce function which takes a callback function and delay.
+
+//Now, inside the debounce function we create a timer using setTimeout. Now, this timer's job is to make sure that the next call for getData only happens after 300 ms. This is what debouncing is.
+//Also, we use clearTimeout to remove it. Don't want too many of them hanging out there taking up memory space!
