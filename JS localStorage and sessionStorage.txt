@@ -1,0 +1,14 @@
+//Storage in JavaScript 💾
+
+
+localStorage: Data persists even after closing your session
+
+sessionStorage: You lose your data when your session is over, like when you close the browser on the tab.
+
+// save
+localStorage.setItem('key', 'value')
+// get saved data
+let data = localStorage.getItem('key')
+// remove saved data
+localStorage.removeItem('key')
+// Same for sessionStorage
