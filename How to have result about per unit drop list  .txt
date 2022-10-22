@@ -1,0 +1,75 @@
+/************************************
+
+3) List markup amounts per unit by product and vendor
+    (let the user choose a specific product and/or vendor)
+
+**********************************/
+SELECT * FROM Product_Vendor_Price_History A
+SELECT * FROM Product_Sales_Price_History B
+SELECT * FROM Product C
+SELECT * FROM Vendor D
+
+
+ALTER PROCEDURE P_RPT_Markup_Per_Unit 
+@UPC VARCHAR(100) =NULL, 
+@AS_OF_DATE DATE = NULL, 
+@VENDOR_ID VARCHAR(100) =NULL,
+@Product_Name VARCHAR(100)=NULL,
+@Vendor_Name VARCHAR(100)=NULL 
+AS 
+BEGIN 
+
+SELECT A.UPC,A.Vendor_ID,
+--A.Date_End,
+AS_OF_DATE = @AS_OF_DATE,
+Markup_Per_Unit=(B.Unit_Price-A.Unit_Price),
+C.Product_Name,C.UOM,D.Vendor_Name 
+--aggregations: sum(), avg(), max(), min(), count()
+--select top 1 * 
+FROM Product_Vendor_Price_History A, 
+     Product_Sales_Price_History B,
+	 Product C,
+	 Vendor D
+WHERE A.UPC =B.UPC AND
+C.UPC=A.UPC AND
+D.Vendor_ID=A.Vendor_ID AND 
+A.UPC=@UPC AND 
+@AS_OF_DATE BETWEEN A.Date_Start AND A.Date_End AND 
+@AS_OF_DATE BETWEEN B.Date_Start AND B.Date_End AND
+A.VENDOR_ID=@VENDOR_ID AND
+C.Product_Name=@Product_Name+'%' AND
+D.Vendor_Name=@Vendor_Name+'%' 
+
+--GROUP BY A.UPC,A.Vendor_ID,A.Unit_Price,A.Date_End,A.Unit_Price,B.Unit_Price,Product_Name, C.UOM, D.Vendor_Name 
+
+END
+
+alter PROCEDURE P_DD_UPC
+AS 
+BEGIN 
+
+SELECT --DISTINCT
+  UPC
+FROM product --Product_Vendor_Price_History A
+UNION ALL 
+SELECT UPC=NULL
+ORDER BY UPC --DESC 
+
+END 
+
+select couNT(1) from Product_Vendor_Price_History
+select count(1) from product
+ 
+
+
+ALTER PROCEDURE P_DD_VENDOR_NAME 
+AS 
+BEGIN 
+
+SELECT Vendor_ID, Vendor_Name
+FROM Vendor
+UNION ALL 
+SELECT Vendor_ID=NULL, Vendor_Name = NULL
+ORDER BY Vendor_Name --Vendor_ID 
+
+END 
