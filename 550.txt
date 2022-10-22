@@ -1,0 +1,56 @@
+declare @cnt_players int,
+        @cnt_players_logged_in_on_day_2 int
+
+select @cnt_players = count(distinct player_id)
+from activity
+
+select player_id, first_login_date = min(event_date)
+into #t
+from activity
+group by player_id
+
+select @cnt_players_logged_in_on_day_2 = count(distinct a.player_id)
+from activity a inner join
+     #t 
+       on a.player_id = #t.player_id and
+          a.event_date = dateadd(day, 1, #t.first_login_date)
+
+ SELECT Fraction = 
+  ROUND(
+   CONVERT(NUMERIC(19,10), ISNULL(@cnt_players_logged_in_on_day_2, 0)) / 
+   CONVERT(NUMERIC(19,10), @cnt_players), 2)
+
+
+
+
+SELECT
+	ROUND(
+     CONVERT(NUMERIC(19,10), COUNT(DISTINCT A.player_id)) / 
+     CONVERT(NUMERIC(19,10), B.TOTAL_PLAYER_CNT), 2) AS fraction
+FROM
+    Activity A INNER JOIN
+    (SELECT PLAYER_ID, MIN_LOGIN_DATE = MIN(EVENT_DATE)
+     FROM Activity 
+     GROUP BY player_id) A2 
+       ON A2.PLAYER_ID = A.PLAYER_ID AND
+          A.EVENT_DATE = DATEADD(DAY, 1, A2.MIN_LOGIN_DATE),
+    (SELECT COUNT(distinct player_id) AS TOTAL_PLAYER_CNT
+     FROM Activity) B
+  GROUP BY CONVERT(NUMERIC(19,10), B.TOTAL_PLAYER_CNT)   
+
+
+
+select round(
+       convert (numeric (19,10),count(distinct a2.player_id ))/ 
+       convert(numeric(19,10), b.total_player_id))as fraction 
+from activity a inner join 
+      (select player_id,min(event_date)as min_log_date from activity group by player_id ) as a2
+      on a.player_id=a2.player_id and a.event_date=dateadd(day, 1,a2.min_log_date),
+      (select count(distinct player_id)as total_player_id from activity ) as b 
+group by convert(numeric(19,10),b.total_player_id)
+
+
+
+
+
+
