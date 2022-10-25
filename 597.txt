@@ -1,0 +1,24 @@
+/*******************************
+Acceptance-rate = # of accepts/# of requests
+# of accepts = count(distinct request+accepts in RequestsAcceptable table)
+# of requests = count(distinct senders+receivers in FriendRequest table)
+********************************/
+declare @cnt_accepts int,
+        @cnt_requests int
+
+select @cnt_requests = 
+  count(distinct convert(varchar(100), sender_id) + ';' + convert(varchar(100), send_to_id))
+ from FriendRequest
+
+select @cnt_accepts =  
+ count(distinct convert(varchar(100), requester_id) + ';' + convert(varchar(100), accepter_id))
+from RequestAccepted
+
+select accept_rate = 
+convert(numeric(19,2), 
+ case when @cnt_requests > 0
+      then convert(numeric(19,2), @cnt_accepts) / convert(numeric(19,2), @cnt_requests)
+      else 0.00
+      end)
+
+
