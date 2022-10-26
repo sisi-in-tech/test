@@ -1,0 +1,16 @@
+select id, num
+from(
+    select id, num, rank() over(order by num desc) as 'rk'
+    from (
+        select id, count(*) as 'num'
+        from (
+            select requester_id as 'id'
+            from RequestAccepted
+            union all
+            select accepter_id as 'id'
+            from RequestAccepted
+        ) as a
+        group by id
+    ) as b
+) as c
+where rk = 1;
