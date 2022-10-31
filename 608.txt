@@ -1,0 +1,26 @@
+SELECT DISTINCT
+ id = THIS.id,
+ type = CASE 
+            WHEN THIS.p_id IS NULL THEN 'Root'
+            WHEN CHILD.ID IS NULL THEN 'Leaf'
+            ELSE 'Inner'
+            END
+FROM tree THIS left outer join
+     tree PARENT
+       on PARENT.Id = THIS.p_id left outer join
+     tree CHILD
+       on CHILD.P_Id = THIS.ID
+
+
+
+Select Distinct This.id as id , 
+       type = 
+       case 
+       when This.p_id is null then 'Root'
+       when Child.id is null then 'Leaf'
+       else 'Inner'
+       end 
+from Tree This left outer join Tree Parent 
+     on This.id=Parent.P_id 
+     left outer join Tree Child 
+     on This.id=Child.P_id  
