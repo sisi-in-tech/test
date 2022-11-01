@@ -1,0 +1,10 @@
+1.求开方SQRT
+2.求平方SQUARE
+
+select min(A) as shortest from
+(
+select distinct Convert(decimal(18,2),SQRT(SQUARE(P1.x-P2.x)+SQUARE(P1.y-P2.y))) as A from point2d P1,point2d P2 where P1.x!=P2.x or P1.y!=P2.y
+)
+as R
+
+
