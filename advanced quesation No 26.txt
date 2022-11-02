@@ -1,0 +1,22 @@
+DROP TABLE #T 
+SELECT ProductID, 
+       ProductNumber,
+	   HyphenLocation=charindex('-',ProductNumber),
+	   BaseProductNumber=
+	      CASE WHEN charindex('-',ProductNumber)=0 THEN ProductNUmber 
+		       ELSE SUBSTRING(ProductNumber, 1,charindex('-',ProductNumber)-1)
+		 END, 
+	   Size=
+	      CASE WHEN charindex('-',ProductNumber)=0 THEN NULL 
+		       ELSE SUBSTRING(ProductNumber,charindex('-',ProductNumber)+1,2)
+		END ,
+		ProductSubcategoryID
+INTO #T
+FROM Product
+ORDER BY ProductID 
+SELECT #T.BaseProductNumber, TotalSize=count(DISTINCT #T.Size)    
+FROM #T 
+      join ProductSubcategory p
+	   on #T.ProductSubcategoryID=p.ProductSubcategoryID
+WHERE P.ProductCategoryID=3
+GROUP BY #T.BaseProductNumber
