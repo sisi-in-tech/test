@@ -1,0 +1,68 @@
+
+OPTION 1 
+
+SELECT CustomerID, CustomerName, ProductSubcategoryName
+
+FROM 
+(
+SELECT C.CustomerID, 
+       CustomerName=C.FirstName+' '+C.LastName, 
+	   S.ProductSubcategoryName,
+	   H.OrderDate,
+	   D.LineTotal,
+	   RANK_NO = RANK() OVER (PARTITION BY C.CUSTOMERID ORDER BY D.LINETOTAL DESC)
+FROM Customer C 
+     INNER JOIN SalesOrderHeader H
+	  ON C.CustomerID=H.CustomerID 
+	 INNER JOIN SalesOrderDetail D
+	  ON H.SalesOrderID=D.SalesOrderID 
+	 INNER JOIN Product P
+	  ON P.ProductID=D.ProductID
+	 INNER JOIN ProductSubCategory S 
+	  ON P.ProductSubcategoryID=S.ProductSubcategoryID
+WHERE C.CustomerID IN (19500, 19792, 24409, 26785) AND 
+	NOT EXISTS 
+		(SELECT * 
+		FROM SALESorderheader h2
+		where h2.customerid = h.customerid and 
+			h2.orderdate > h.orderdate)
+) AA
+WHERE RANK_NO = 1
+
+
+ OPTION  2 
+drop table #t
+SELECT S.CustomerID, D.ProductID, D.LineTotal
+INTO #T
+FROM SalesOrderHeader S INNER JOIN
+     SalesOrderDetail D
+	    ON S.SalesOrderID = D.SalesOrderID
+WHERE NOT EXISTS 
+ (SELECT * 
+  FROM SalesOrderHeader S2
+  WHERE S2.OrderDate > S.OrderDate AND 
+        S2.CUSTOMERID = S.CUSTOMERID) AND
+	  S.CustomerID IN (19500, 19792, 24409, 26785)
+
+SELECT T.CustomerID, 
+   CustomerName = C.FIRSTNAME + ' ' + C.LastName,
+   ProductSubCategoryName = pc.ProductSubCategoryName
+FROM #T T INNER JOIN
+--SELECT * FROM
+     Customer C
+	   ON C.CustomerID = T.CustomerID INNER JOIN
+	 Product P
+	   ON P.ProductID = T.ProductID INNER JOIN
+	 ProductSubCategory PC
+	   ON PC.ProductSubCategoryID = P.ProductSubCategoryID
+WHERE NOT EXISTS 
+ (SELECT *
+  FROM #T T2
+  WHERE T2.CustomerID = T.CustomerID AND
+        T2.LineTotal > T.LineTotal)
+
+
+		
+	
+
+
