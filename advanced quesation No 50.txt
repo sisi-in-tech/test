@@ -1,0 +1,29 @@
+SELECT c.CustomerID, 
+       c.CompanyName, 
+	  CustomerGroup=
+	    CASE WHEN SUM(s.UnitPrice*s.Quantity)<1000 THEN'Low'
+		     WHEN SUM(s.UnitPrice*s.Quantity) between 1000 and 4999 THEN'Medium'
+			 WHEN SUM(s.UnitPrice*s.Quantity)>=5000 and SUM(s.UnitPrice*s.Quantity)<10000 THEN'High'
+		ELSE 'Very High'
+		END,
+	   TotalOrderAmt=SUM(s.UnitPrice*s.Quantity)
+INTO #orderamt 
+FROM Customers c 
+     join Orders o 
+	  on c.CustomerID=o.CustomerID 
+	 join Orderdetails s 
+	  on o.OrderID=s.OrderID
+WHERE o.OrderDate>='2016-01-01' AND o.OrderDate<'2017-01-01'
+GROUP BY c.CustomerID, 
+         c.CompanyName
+
+declare @customer_cnt numeric(9,4)
+
+select @customer_cnt = count(1)
+from #orderamt
+
+select customer_group = CustomerGroup, 
+ total_in_group = count(customerid),
+ pct_in_group = count(customerid) / @customer_cnt
+from #orderamt
+group by CustomerGroup
