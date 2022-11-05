@@ -1,0 +1,25 @@
+SELECT SHIP_COUNTRY = SHIPCOUNTRY,
+  CUSTOMER_ID = CUSTOMERID, 
+  ORDER_ID =  ORDERID, 
+  ORDER_DATE = CONVERT(DATE, ORDERDATE)
+FROM Orders O
+WHERE NOT EXISTS 
+ (SELECT * 
+  FROM ORDERS O2
+  WHERE O2.SHIPCOUNTRY = O.SHIPCOUNTRY AND
+        O2.ORDERDATE < O.ORDERDATE)
+
+
+
+OP 2 
+
+SELECT *
+FROM 
+(
+SELECT ShipCountry,OrderDate=Convert(date,OrderDate),CustomerID, OrderID,
+        Rownumber=
+             ROW_NUMBER () 
+		   OVER (Partition By ShipCountry Order by OrderDate)
+		      
+FROM  Orders ) AA
+WHERE ROWNUMBER = 1
