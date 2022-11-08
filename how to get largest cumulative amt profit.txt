@@ -1,0 +1,35 @@
+HOW TO GET LARGEST CUMULATIVE AMT PROFIT ?
+
+Alter PROCEDURE P_Largest_Cumulative_Amt_Profit 
+AS
+BEGIN 
+
+
+SELECT B.CUSTOMER_ORDER_LINE_ID, 
+   B.UPC,
+   UNIT_QTY = B.QUANTITY,
+   SALES_PRICE_PER_UNIT = B.ACTUAL_UNIT_PRICE,
+   PURCHASE_PRICE_PER_UNIT = MIN(A.UNIT_PRICE)  （选择进货最低的Vendor）
+
+INTO #T   (创建一个临时表格）
+FROM Customer_Order O inner join
+    Customer_Order_Line B 
+	   on b.Order_ID = o.order_id inner join
+     Product_Vendor_Price_History A 
+       ON A.UPC=B.UPC AND
+	      o.date_of_order between a.Date_Start and a.Date_End
+GROUP BY B.CUSTOMER_ORDER_LINE_ID, B.UPC, B.QUANTITY, B.ACTUAL_UNIT_PRICE
+
+SELECT TOP 1  
+  #T.UPC, P.PRODUCT_NAME,
+  PROFIT_AMT = SUM((#T.SALES_PRICE_PER_UNIT - #T.PURCHASE_PRICE_PER_UNIT) * #T.UNIT_QTY)
+FROM #T INNER JOIN
+     PRODUCT P
+	   ON #T.UPC = P.UPC
+GROUP BY #T.UPC, P.PRODUCT_NAME
+ORDER BY SUM((#T.SALES_PRICE_PER_UNIT - #T.PURCHASE_PRICE_PER_UNIT) * #T.UNIT_QTY) DESC
+
+
+END 
+
+  
