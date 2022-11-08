@@ -1,0 +1,47 @@
+----Check lowerest sercure amount to take out a loan------
+SELECT CNT_LOANS = COUNT(*),
+--SELECT LOAN_AMOUNT, PROPERTY_VALUE,
+ LOAN_TO_PROPERTY_RATIO = ROUND(LOAN_AMOUNT / PROPERTY_VALUE, 2),
+ LOAD_TYPE = CASE WHEN LOAN_TYPE = '1' THEN 'Conventional'
+				  WHEN LOAN_TYPE = '2' THEN 'FHA'
+				  WHEN LOAN_TYPE = '3' THEN 'VA'
+				  WHEN LOAN_TYPE = '4' THEN 'USDA'
+				  END,
+ LOAN_PURPOSE = CASE WHEN LOAN_PURPOSE = '1' THEN 'Home Purchase'
+					WHEN LOAN_PURPOSE = '2' THEN 'Home improvement'
+					WHEN LOAN_PURPOSE = '31' THEN 'Refinancing'
+					WHEN LOAN_PURPOSE = '32' THEN 'Cash-out refinancing'
+					END
+ --PCT_DOWN = 1.00000 - (loan_to_value_ratio)
+--SELECT *
+--loan_amount 
+FROM LOAD_HMDI 
+--WHERE loan_to_value_ratio NOT IN ('NA', 'EXEMPT')
+GROUP BY  ROUND(LOAN_AMOUNT / PROPERTY_VALUE, 2),
+  CASE WHEN LOAN_TYPE = '1' THEN 'Conventional'
+				  WHEN LOAN_TYPE = '2' THEN 'FHA'
+				  WHEN LOAN_TYPE = '3' THEN 'VA'
+				  WHEN LOAN_TYPE = '4' THEN 'USDA'
+				  END,
+ CASE WHEN LOAN_PURPOSE = '1' THEN 'Home Purchase'
+					WHEN LOAN_PURPOSE = '2' THEN 'Home improvement'
+					WHEN LOAN_PURPOSE = '31' THEN 'Refinancing'
+					WHEN LOAN_PURPOSE = '32' THEN 'Cash-out refinancing'
+					END
+ORDER BY ROUND(LOAN_AMOUNT / PROPERTY_VALUE, 2)
+
+SELECT * 
+FROM LOAD_HMDI
+WHERE  ROUND(LOAN_AMOUNT / PROPERTY_VALUE, 2) = 1.13 AND
+  CASE WHEN LOAN_TYPE = '1' THEN 'Conventional'
+				  WHEN LOAN_TYPE = '2' THEN 'FHA'
+				  WHEN LOAN_TYPE = '3' THEN 'VA'
+				  WHEN LOAN_TYPE = '4' THEN 'USDA'
+				  END = 'Conventional' AND
+ CASE WHEN LOAN_PURPOSE = '1' THEN 'Home Purchase'
+					WHEN LOAN_PURPOSE = '2' THEN 'Home improvement'
+					WHEN LOAN_PURPOSE = '31' THEN 'Refinancing'
+					WHEN LOAN_PURPOSE = '32' THEN 'Cash-out refinancing'
+					END = 'Home Purchase'
+ORDER BY LOAN_AMOUNT - property_value desc
+
