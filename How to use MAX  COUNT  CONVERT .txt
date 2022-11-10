@@ -1,0 +1,27 @@
+We define an employee's total earnings to be their monthly SALARY* MONTHS  worked, and the maximum total earnings to be the maximum total earnings for any employee in the Employee table. Write a query to find the maximum total earnings for all employees as well as the total number of employees who have maximum total earnings. Then print these values as  space-separated integers.
+
+
+select max(salary*months), count(salary*months)
+from employee
+where salary*months in 
+(select max(salary*months) from employee)
+
+下面的容易理解：
+
+select CONVERT(VARCHAR(100), salary*months) + ' ' + CONVERT(VARCHAR(100), count(*))
+from employee
+where salary*months IN
+(select max(salary*months) from employee)
+GROUP BY salary*months
+
+
+***************
+MAX 
+COUNT 
+CONVERT 
+
+
+SELECT 'A' + 'C' + 'B'
+SELECT CONVERT(VARCHAR(10), 1) + 'C' + CONVERT(VARCHAR(10), 2)
+SELECT 1 + 'C' + 2
+SELECT '1' + 'C' + '2'
