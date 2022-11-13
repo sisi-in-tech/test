@@ -1,0 +1,22 @@
+INNER JOIN vs LEFT JOIN
+INNER JOIN vs LEFT JOIN? Actually, that is not the question at all. You’ll use INNER JOIN when you want to return only records having pair on both sides, and you’ll use LEFT JOIN when you need all records from the “left” table, no matter if they have pair in the “right” table or not. If you’ll need all records from both tables, no matter if they have pair, you’ll need to use CROSS JOIN (or simulate it using LEFT JOINs and UNION). More about that in the upcoming articles.
+
+
+
+
+
+Given the CITY and COUNTRY tables, query the names of all the continents (COUNTRY.Continent) and their respective average city populations (CITY.Population) rounded down to the nearest integer.
+
+Note: CITY.CountryCode and COUNTRY.Code are matching key columns.
+
+
+Select ct.Continent, Floor(AVG(cy.population))
+from country ct
+inner join city cy on cy.countrycode = ct.code
+group by ct.Continent
+
+
+
+*****
+FLOOR 
+INNER JOIN 
