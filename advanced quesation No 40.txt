@@ -1,0 +1,61 @@
+DECLARE @PRODUCTID INT
+
+CREATE TABLE #T
+(ProductID int,
+ CalendarDate date)
+
+DECLARE C1 CURSOR FOR
+SELECT DISTINCT PRODUCTID
+FROM ProductListPriceHistory 
+ORDER BY PRODUCTID 
+
+OPEN C1 
+FETCH C1 INTO @PRODUCTID 
+WHILE @@FETCH_STATUS = 0
+BEGIN
+
+INSERT INTO #T
+(ProductID, CalendarDate)
+SELECT ProductID = @PRODUCTID, C.CalendarDate
+FROM Calendar C LEFT OUTER JOIN
+     ProductListPriceHistory P
+	   ON C.CalendarDate BETWEEN P.StartDate AND ISNULL(P.EndDate, '1/1/3000') AND
+          P.ProductID = @PRODUCTID --707  
+WHERE P.ProductID IS NULL AND
+      C.CalendarDate <=  
+	    (SELECT MAX(STARTDATE)
+		 FROM ProductListPriceHistory
+		 WHERE ProductID = @PRODUCTID) AND 
+      C.CalendarDate >=  
+	    (SELECT MIN(STARTDATE)
+		 FROM ProductListPriceHistory
+		 WHERE ProductID = @PRODUCTID)  
+
+FETCH C1 INTO @PRODUCTID 
+END
+CLOSE C1
+DEALLOCATE C1
+
+*********************************************************
+
+Optional 2 LEFT JOIN 
+SELECT ProductID, 
+       StartDate=MIN(StartDate), 
+	   EndDate=MAX(ISNULL(EndDate,'2014-05-29'))
+INTO #P
+FROM ProductListPriceHistory
+GROUP BY ProductID
+
+SELECT #P.ProductID ,
+       C.CalendarDate 
+INTO #Ca
+FROM #P  
+     LEFT JOIN Calendar c 
+	 ON C.CalendarDate BETWEEN #P.StartDate AND #P.EndDate
+
+SELECT #Ca.ProductID, MissPricedate=#ca.CalendarDate
+FROM #Ca
+     LEFT JOIN ProductListPriceHistory Y 
+	 ON #Ca.CalendarDate BETWEEN Y.StartDate AND ISNULL(Y.EndDate,'2014-05-29')
+	 AND Y.ProductID=#Ca.ProductID
+WHERE Y.ProductID IS NULL 
