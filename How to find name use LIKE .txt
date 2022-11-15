@@ -1,0 +1,23 @@
+ALTER PROCEDURE P_RPT_Customer_Order_History   
+@Customer_Last_Name VARCHAR (100)=NULL,  
+@Customer_First_Name VARCHAR(100) =NULL,  
+@Customer_Zip_Code  INT =NULL   
+AS   
+BEGIN   
+  
+SELECT A.Customer_First_Name, A.Customer_Last_Name,A.Customer_Zip_Code,  
+MAX_Date_Of_Order=MAX (C.Date_Of_Order) ,Min_Date_Of_Order= MIN(C.Date_Of_Order),  
+Total_Of_Amt =SUM(B.QUANTITY * B.Actual_Unit_Price),  
+Number_Of_Order=COUNT(*)  
+FROM Customer_Order C,  
+     Customer_Order_Line B,  
+  Customer A  
+  WHERE C.Order_ID=B.Order_ID AND  
+        A.Customer_ID=C.Customer_ID AND  
+     (A.Customer_First_Name LIKE @Customer_First_Name + '%' OR 
+	  @Customer_First_Name is NULL) AND  
+     (A.Customer_Last_Name LIKE @Customer_Last_Name +'%' OR 
+	 @Customer_Last_Name is NULL) AND  
+     (A.Customer_Zip_Code=@Customer_Zip_Code OR @Customer_Zip_Code is NULL)  
+GROUP BY A.Customer_First_Name, A.Customer_Last_Name,A.Customer_Zip_Code  
+  
