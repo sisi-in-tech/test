@@ -1,0 +1,15 @@
+ALTER PROCEDURE P_Most_Number_Of_Vendor_Price 
+AS
+BEGIN 
+
+/****************************************
+vi. List the vendor that has the MOST number of vendor-prices.
+*****************************************/
+
+SELECT TOP 1 VENDOR_ID, CNT = COUNT(DISTINCT UPC)
+FROM Product_Vendor_Price_History
+GROUP BY VENDOR_ID
+ORDER BY COUNT(DISTINCT UPC) DESC
+
+
+END 
