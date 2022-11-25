@@ -1,0 +1,26 @@
+How to get largest cumulative amount of revenue ?
+
+ALTER PROCEDURE P_Largest_Cumulative_Amt_Revenue 
+AS 
+BEGIN 
+/*****************************************
+vii. Which product has the largest cumulative amount of revenue for Nordstrom? 
+
+Revenue amount = sales amount
+Profit/mark-up amount = sales - expenses
+*****************************************/
+SELECT top 1 ,B.Actual_Unit_Price,
+B.UPC,C.Product_Name,
+CNT = COUNT(*), 
+Amt_Revenue = sum(b.actual_unit_price * b.quantity)
+FROM 
+  Customer_Order_Line B INNER JOIN 
+  Product C 
+    ON b.UPC=C.UPC 
+GROUP BY B.UPC,
+                  C.Product_Name
+ORDER BY Amt_Revenue DESC 
+
+END 
+
+  
