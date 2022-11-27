@@ -1,0 +1,5 @@
+假如还是在运转中的话，先NOLOCK 
+select * from DIM_GEOGRAPHY_MASTER (nolock)
+
+sp_spaceused DIM_GEOGRAPHY_CENSUS_BLOCK (表格名称）
+
