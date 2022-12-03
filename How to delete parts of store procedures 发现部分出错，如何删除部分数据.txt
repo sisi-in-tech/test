@@ -1,0 +1,4 @@
+找到相应的insert statement ， 
+DELETE FROM DIM_GEOGRAPHY_MASTER WHERE Geography_Type='STATE_HOUSE_DISTRICT'
+
+Delete from 表格名称 哪个字段
