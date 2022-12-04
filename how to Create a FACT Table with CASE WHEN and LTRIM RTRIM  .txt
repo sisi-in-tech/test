@@ -1,0 +1,109 @@
+ALTER PROCEDURE Load_P_Fact_Le_All_Data 
+AS
+BEGIN 
+
+--SELECT * FROM FACT_LE_ALL_DATA
+
+TRUNCATE TABLE FACT_LE_ALL_DATA 
+
+INSERT Fact_Le_All_Data 
+(Dim_Le_Series_Id,Yr, Period, Value, YN_Seasonal, Dim_Le_Ages_Code, Dim_Le_Class_Code, 
+Dim_Le_Education_Code, Dim_Le_Fips_Code, Dim_Le_Indy_Code, Dim_Le_Occupation_Code, 
+Dim_Le_Sexs_Code,Dim_Le_Tdata_Code)
+SELECT 
+Dim_Le_Series_Id=D.Series_Id,
+Yr=D.Year, 
+Period=D.Period,
+Value=D.Value,
+YN_Seasonal=
+CASE WHEN S.Dim_Le_Seasonal_Code='S' THEN 'Y'
+	 WHEN S.Dim_Le_Seasonal_Code='U' THEN 'N'   ((INSERT 的顺序要和SELECT的顺序相同））
+ELSE 'N'
+END ,                                                                                 （（需要逗号））
+Dim_Le_Ages_Code=S.Dim_Le_Ages_Code,
+Dim_Le_Class_Code=S.Dim_Le_Class_Code, 
+Dim_Le_Education_Code=S.Dim_Le_Education_Code, 
+Dim_Le_Fips_Code=S.Dim_Le_Fips_Code, 
+Dim_Le_Indy_Code=S.Dim_Le_Indy_Code,
+Dim_Le_Occupation_Code=S.Dim_Le_Occupation_Code, 
+Dim_Le_Sexs_Code=S.Dim_Le_Sexs_Code,
+Dim_Le_Tdata_Code=S.Dim_Le_Tdata_Code
+FROM Load_Le_All_Data D INNER JOIN 
+	 Dim_Le_Series S 
+	 ON D.Series_Id=S.Dim_Le_Series_Id
+WHERE LTRIM(RTRIM(D.VALUE)) <> '-'               （（发现了不是数字也不是小数的标记）
+
+INSERT Fact_Le_All_Data
+(Dim_Le_Series_Id,Yr, Period, Value, YN_Seasonal, Dim_Le_Ages_Code, Dim_Le_Class_Code, 
+Dim_Le_Education_Code, Dim_Le_Fips_Code, Dim_Le_Indy_Code, Dim_Le_Occupation_Code, 
+Dim_Le_Sexs_Code,Dim_Le_Tdata_Code)
+ SELECT 
+Dim_Le_Series_Id=C.Series_Id,
+Yr=C.Year, 
+Period=C.Period,
+Value=C.Value,
+YN_Seasonal=
+CASE WHEN S.Dim_Le_Seasonal_Code='S' THEN 'Y'
+	 WHEN S.Dim_Le_Seasonal_Code='U' THEN 'N'
+ELSE 'N'
+END ,
+Dim_Le_Ages_Code=S.Dim_Le_Ages_Code,
+Dim_Le_Class_Code=S.Dim_Le_Class_Code, 
+Dim_Le_Education_Code=S.Dim_Le_Education_Code, 
+Dim_Le_Fips_Code=S.Dim_Le_Fips_Code, 
+Dim_Le_Indy_Code=S.Dim_Le_Indy_Code,
+Dim_Le_Occupation_Code=S.Dim_Le_Occupation_Code, 
+Dim_Le_Sexs_Code=S.Dim_Le_Sexs_Code,
+Dim_Le_Tdata_Code=S.Dim_Le_Tdata_Code
+FROM Load_Le_Data_Current C INNER JOIN 
+	 Dim_Le_Series S 
+	 ON C.Series_Id=S.Dim_Le_Series_Id
+WHERE LTRIM(RTRIM(C.VALUE)) <> '-' AND
+  NOT EXISTS 
+  ( SELECT * 
+     FROM Fact_Le_All_Data F
+	  WHERE F.Dim_Le_Series_Id=C.Series_Id AND  
+            F.Yr=C.Year AND 
+            F.Period=C.Period --AND 
+           -- F.Value=C.Value
+	)
+
+
+END 
+
+
+/***********************************************
+SELECT SERIES_ID, YEAR, PERIOD, COUNT(1)
+FROM Load_Le_All_Data
+GROUP BY SERIES_ID, YEAR, PERIOD
+HAVING COUNT(1) > 1
+
+SELECT [Dim_Le_Ages_Code],[Dim_Le_Class_Code],[Dim_Le_education_code],
+	[Dim_Le_Fips_Code],
+	[Dim_Le_Indy_Code],
+	[Dim_Le_Occupation_Code],
+	[Dim_Le_Sexs_Code],
+	[Dim_Le_Tdata_Code], COUNT(1)
+FROM DIM_LE_SERIES
+GROUP BY [Dim_Le_Ages_Code],[Dim_Le_Class_Code],[Dim_Le_education_code],
+	[Dim_Le_Fips_Code],
+	[Dim_Le_Indy_Code],
+	[Dim_Le_Occupation_Code],
+	[Dim_Le_Sexs_Code],
+	[Dim_Le_Tdata_Code]
+HAVING COUNT(1) > 1
+
+SELECT * 
+FROM DIM_LE_SERIES
+WHERE DIM_LE_CLASS_CODE = 3 AND 
+[Dim_Le_Ages_Code] = 0 AND [Dim_Le_education_code] = 0 AND
+	[Dim_Le_Fips_Code] = 0 AND
+	[Dim_Le_Indy_Code] = 0 AND
+	[Dim_Le_Occupation_Code] = 0 AND
+	[Dim_Le_Sexs_Code] = 0 AND
+	[Dim_Le_Tdata_Code] = 0
+
+SELECT * FROM DIM_LE_EARN
+
+
+***************************************/
