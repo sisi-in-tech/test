@@ -1,0 +1,41 @@
+*******************************************************
+
+iii. List any products that have a vendor-price, but no sales-price.
+
+*******************************************************/
+---product table ,vender price table, sales price table 
+
+--SELECT * FROM PRODUCT A
+--SELECT * FROM Product_Sales_Price_History B
+--SELECT * FROM Product_Vendor_Price_History C
+
+ALTER  PROCEDURE P_NO_Sales_Price_Product_List 
+
+AS 
+BEGIN 
+/****
+SELECT A.Product_Name, B.Unit_Price AS Sales_Price,B.UPC,C.Unit_Price AS Vendor_Price ,C.UPC 
+FROM Product A INNER JOIN Product_Vendor_Price_History C ON 
+A.UPC=C.UPC RIGHT JOIN Product_Sales_Price_History B ON 
+B.UPC=C.UPC 
+WHERE B.Unit_Price=ISNULL ( B.Unit_Price,0.00)
+****/
+--there are 2 ways to do this--
+--#1 (actually, this is the best way)
+--do you understand this:?
+SELECT UPC, PRODUCT_NAME
+FROM PRODUCT A 
+WHERE NOT EXISTS 
+ (SELECT * 
+  FROM Product_Sales_Price_History B 
+  WHERE B.UPC = A.UPC) AND 
+      EXISTS 
+ (SELECT * 
+  FROM Product_Vendor_Price_History B
+  WHERE B.UPC = A.UPC)
+
+ 
+
+END 
+
+
