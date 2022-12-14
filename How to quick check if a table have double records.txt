@@ -1,0 +1,10 @@
+select state_number, CENSUS_TRACT_NUMBER, COUNTY_NUMBER, count(1) 
+from DIM_GEOGRAPHY_CENSUS_TRACT
+group by state_number, CENSUS_TRACT_NUMBER, COUNTY_NUMBER
+having count(1) > 1
+
+具体到实际的column 进行检查 
+select * from DIM_GEOGRAPHY_CENSUS_TRACT
+where state_number = '02' and 
+ census_tract_number = '0001.00'
+
