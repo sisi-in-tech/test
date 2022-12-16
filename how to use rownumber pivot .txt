@@ -1,0 +1,36 @@
+row_number() OVER (PARTITION BY COL1 ORDER BY COL2) 表示根据COL1分组，在分组内部根据 COL2排序，而此函数计算的值就表示每组内部排序后的顺序编号（组内连续的唯一的)
+
+
+在SQL SERVER 2005中提供了更为简便的方法，这就是"PIVOT"关系运算符。（相反的“列转行”是UNPIVOT），以下是使用PIVOT实现“行转列”的SQL语句
+
+SELECT [星期一],[星期二],[星期三],[星期四],[星期五],[星期六],[星期日]
+FROM WEEK_INCOME
+PIVOT
+(
+    SUM(INCOME) for [week] in([星期一],[星期二],[星期三],[星期四],[星期五],[星期六],[星期日])
+)TBL
+
+
+
+
+Pivot the Occupation column in OCCUPATIONS so that each Name is sorted alphabetically and displayed underneath its corresponding Occupation. The output column headers should be Doctor, Professor, Singer, and Actor, respectively.
+
+Note: Print NULL when there are no more names corresponding to an occupation.
+
+
+
+
+SELECT
+    [Doctor], [Professor], [Singer], [Actor]
+FROM
+(
+    SELECT ROW_NUMBER() OVER (PARTITION BY OCCUPATION ORDER BY NAME) [RowNumber], * FROM OCCUPATIONS
+) AS tempTable
+PIVOT
+(
+    MAX(NAME) FOR OCCUPATION IN ([Doctor], [Professor], [Singer], [Actor])
+) AS pivotTable
+
+
+
+
