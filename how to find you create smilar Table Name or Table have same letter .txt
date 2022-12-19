@@ -1,0 +1,4 @@
+SELECT OBJECT_name(OBJECT_ID), NAME
+FROM SYS.COLUMNS
+where object_name(object_id) like 'dim_le%'
+ORDER BY OBJECT_NAME(OBJECT_id), name
