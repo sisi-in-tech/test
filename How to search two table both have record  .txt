@@ -1,0 +1,16 @@
+ALTER PROCEDURE P_Vendor_Have_Sales_Price 
+AS 
+BEGIN 
+/*****************************************************
+v.  List the # of vendors that have a vendor-prices, for 
+ products that also have a sales-price, for each product.
+********************************************************/
+SELECT A.UPC, VENDOR_CNT = COUNT(DISTINCT A.VENDOR_ID)
+FROM Product_Vendor_Price_History A
+WHERE EXISTS 
+ (SELECT * 
+  FROM Product_Sales_Price_History B
+  WHERE B.UPC = A.UPC)
+GROUP BY A.UPC
+
+END 
