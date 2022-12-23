@@ -1,0 +1,11 @@
+SELECT * FROM sys.dm_exec_connections
+
+SELECT SESSION_ID
+FROM sys.dm_exec_sessions A, 
+   SYS.DATABASES B
+WHERE A.DATABASE_ID = B.DATABASE_ID AND 
+ B.NAME = 'HMDA'
+
+ DBCC INPUTBUFFER(55)
+
+KILL 55
