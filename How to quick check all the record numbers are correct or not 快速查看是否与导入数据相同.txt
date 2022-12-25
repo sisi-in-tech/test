@@ -1,0 +1,10 @@
+select rows, object_name(object_id) 
+from sys.partitions 
+where object_name(object_id) like 'dim_geography%'
+order by object_name(object_id)
+
+
+
+select geography_type, count(1) 
+from [dbo].[DIM_GEOGRAPHY_MASTER]
+group by geography_type
