@@ -1,0 +1,25 @@
+select * from sys.databases
+
+
+select * from sys.syslogins
+
+select * from msdb..sysjobs
+
+** Three ways to do it :
+1. Database restore
+2. Stop SQL Instance, copy-and-paste the data and log files (.mdf and .ldf), and 
+  "attach" the new data files to the new SQL Instance.
+3. Script-out the "create" statements.
+4. SSIS Transfer Database Task
+
+1. 找到这个logcial name 的file ，也可以在属性中找到
+restore filelistonly
+from DISK = 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLSERVER2019_i2\MSSQL\DATA\DWDiagnostics.BAK'
+
+restore DATABASE DWDiagnostics
+--restore filelistonly
+from DISK = 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLSERVER2019_i2\MSSQL\DATA\DWDiagnostics.BAK'
+WITH stats = 1,
+ move 'DWDiagnostics' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLSERVER2019_i2\MSSQL\DATA\DWDiagnostics.mdf',
+ move 'DWDiagnostics_log' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLSERVER2019_i2\MSSQL\DATA\DWDiagnostics_log.ldf'
+
