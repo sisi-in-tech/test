@@ -1,0 +1,27 @@
+declare @tbl_name varchar(100),
+	    @SQL_STRING NVARCHAR(4000)
+
+DECLARE C1 cursor for
+SELECT NAME --'SELECT [' + NAME + '] = COUNT(1) FROM [' + NAME + ']'
+FROM SYS.TABLES
+WHERE NAME LIKE 'DIM%' AND
+      modify_date > CONVERT(DATE, GETDATE())
+ORDER BY NAME DESC
+
+OPEN C1
+FETCH C1 into @tbl_name
+WHILE @@FETCH_STATUS = 0
+BEGIN
+ SELECT @SQL_STRING = 
+   ' IF NOT EXISTS (SELECT * FROM [' + @TBL_NAME + ']) '
+   ' BEGIN ' + 
+   '  DROP TABLE [' + @TBL_NAME + '] ' 
+   ' END '
+
+ SELECT @SQL_STRING
+ EXEC  sp_executesql @SQLSTRING 
+
+ FETCH C1 into @tbl_name
+END
+CLOSE C1
+DEALLOCATE C1
