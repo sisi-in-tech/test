@@ -1,0 +1,72 @@
+drop index load_hmdi.IX_LOAD_HMDI_RACE
+
+CREATE INDEX IX_LOAD_HMDI_RACE ON LOAD_HMDI ([applicant_race-1]) include (loan_amount, applicant_age)
+
+SELECT applicant_age, NUM_OF_LOANS = COUNT(*), 
+ TOTAL_LOAN_AMOUNT = SUM(LOAN_AMOUNT),
+ AVG_LOAN_AMT = AVG(LOAN_AMOUNT)
+--loan_amount , [applicant_race-1],applicant_age
+--SELECT TOP 1 * 
+--SELECT DISTINCT LOAN_AMOUNT
+FROM LOAD_HMDI
+WHERE [applicant_race-1]='22'
+GROUP BY applicant_age
+ORDER BY APPLICANT_AGE
+--ORDER BY COUNT(*) desc 
+
+*****************
+当出现多个表格join的情况， 可以create index 加速度运转，index包括join的具体column
+查找表格是否存在index ： exec sp_helpindex  DIM_GEOGRAPHY_CENSUS_TRACT（table名称）
+CREATE INDEX IX_DIM_GEOGRAPHY_CENSUS_TRACT 
+ ON DIM_GEOGRAPHY_CENSUS_TRACT (CENSUS_TRACT_NUMBER, STATE_NUMBER)
+  INCLUDE (CENSUS_GEO_ID)
+
+
+ALTER procedure P_LOAD_DIM_GEOGRAPHY_MASTER 
+AS 
+BEGIN 
+INSERT INTO DIM_GEOGRAPHY_MASTER 
+(Geography_Type ,
+ Census_Geo_ID ,
+ Geography_Name,
+ Geography_Number ,
+Parent_Level_1_Geography_Type ,
+Parent_Level_1_Census_Geo_ID ,
+Parent_Level_1_Geography_Name ,
+Parent_Level_1_Geography_Number ,
+Parent_Level_2_Geography_Type ,
+Parent_Level_2_Census_Geo_ID ,
+Parent_Level_2_Geography_Name ,
+Parent_Level_2_Geography_Number ,
+Parent_Level_3_Geography_Type ,
+Parent_Level_3_Census_Geo_ID ,
+Parent_Level_3_Geography_Name ,
+Parent_Level_3_Geography_Number )
+SELECT Geography_Type= 'BLOCK',
+Census_Geo_ID=B.CENSUS_GEO_ID ,
+Geography_Name=NULL,
+Geography_Number=B.CENSUS_BLOCK_NUMBER,
+Parent_Level_1_Geography_Type='TRACT',
+Parent_Level_1_Census_Geo_ID=T.CENSUS_GEO_ID  ,
+Parent_Level_1_Geography_Name=NULL ,
+Parent_Level_1_Geography_Number=B.CENSUS_TRACT_NUMBER,
+Parent_Level_2_Geography_Type='COUNTY' ,
+Parent_Level_2_Census_Geo_ID=C.CENSUS_GEO_ID ,
+Parent_Level_2_Geography_Name=B.COUNTY_NAME ,
+Parent_Level_2_Geography_Number=B.COUNTY_NUMBER ,
+Parent_Level_3_Geography_Type='STATE' ,
+Parent_Level_3_Census_Geo_ID=S.CENSUS_GEO_ID ,
+Parent_Level_3_Geography_Name=B.STATE_NAME ,
+Parent_Level_3_Geography_Number=B.STATE_NUMBER
+FROM DIM_GEOGRAPHY_CENSUS_BLOCK B LEFT OUTER JOIN
+     DIM_GEOGRAPHY_CENSUS_TRACT T 
+	   ON B.STATE_NUMBER=T.STATE_NUMBER AND 
+	      B.CENSUS_TRACT_NUMBER = T.CENSUS_TRACT_NUMBER LEFT OUTER JOIN
+	 DIM_GEOGRAPHY_COUNTY C 
+	   ON B.STATE_NUMBER =C.STATE_NUMBER AND
+	      B.COUNTY_NUMBER = C.COUNTY_NUMBER
+	 LEFT OUTER JOIN DIM_GEOGRAPHY_STATE S 
+	 ON B.STATE_NUMBER=S.STATE_NUMBER 
+
+
+END 
