@@ -1,0 +1,84 @@
+Samantha interviews many candidates from different colleges using coding challenges and contests. Write a query to print the contest_id, hacker_id, name, and the sums of total_submissions, total_accepted_submissions, total_views, and total_unique_views for each contest sorted by contest_id. Exclude the contest from the result if all four sums are .
+
+Note: A specific contest can be used to screen candidates at more than one college, but each college only holds  screening contest.
+
+
+SELECT 
+    c.contest_id,
+    c.hacker_id,
+    c.name,
+    SUM(total.sum_total_submissions) AS sum_total_submissions,
+    SUM(total.sum_accepted_submission) AS sum_accepted_submission,
+    SUM(total.sum_view) AS sum_view,
+    SUM(total.sum_unique_view) AS sum_unique_view
+FROM 
+    Contests c
+    INNER JOIN Colleges co ON co.contest_id = c.contest_id
+    INNER JOIN (
+        SELECT
+            ca.college_id,
+            ca.challenge_id,
+            ISNULL(ss.sum_total_submissions,0) AS sum_total_submissions,
+            ISNULL(ss.sum_accepted_submission,0) AS sum_accepted_submission,
+            ISNULL(vs.sum_view,0) AS sum_view,
+            ISNULL(vs.sum_unique_view,0) AS sum_unique_view
+        FROM 
+            Challenges ca
+            OUTER APPLY (SELECT 
+                            challenge_id,
+                            SUM(total_views) AS sum_view,
+                            SUM(total_unique_views) AS sum_unique_view
+                        FROM 
+                            View_Stats vs
+                        WHERE
+                            vs.challenge_id = ca.challenge_id
+                        GROUP BY 
+                            challenge_id
+                        ) AS vs
+            OUTER APPLY (SELECT 
+                            ss.challenge_id,
+                            SUM(ss.total_submissions) AS sum_total_submissions,
+                            SUM(ss.total_accepted_submissions) AS sum_accepted_submission
+                        FROM 
+                            Submission_Stats ss
+                        WHERE
+                            ss.challenge_id = ca.challenge_id
+                        GROUP BY
+                            ss.challenge_id ) AS ss
+            ) AS total ON total.college_id = co.college_id
+    GROUP BY
+        c.contest_id,
+        c.hacker_id,
+        c.name
+    ORDER BY
+        c.contest_id;
+
+/**********************
+
+SELECT C.Contest_id, 
+       C.hacker_id, C.name,
+       SUM(S.total_submissions) AS SUM_total_submissions ,
+       SUM(S.total_accepted_submissions) AS SUM_total_accepted_submission,  
+
+       SUM(V.total_views ) AS SUM_total_views,
+       SUM(V.total_unique_views) AS  SUM_total_unique_views
+FROM Contests C 
+INNER JOIN JOIN Colleges O 
+	ON C.Contest_id=O.Contest_id *
+LEFT OUTER JOIN Challenges A
+	ON  O.College_id=A.College_id 
+LEFT OUTER JOIN (SELECT chanllege_id, SUM(V.total_views ) ,SUM(V.total_unique_views)
+ 	FROM View_Stats V
+               GROUP BY Chanllege_id ) AS T1
+ 	ON A.Challenge_id=T1.Challenge_id 
+LEFT OUTER JOIN (SELECT Chanllege_id, SUM(S.total_submissions),SUM(S.total_accepted_submissions)
+	FROM Submission_Stats S
+              GROUP BY Chanllege_id) AS T2
+ 	ON V.Challege_id=T2.Challenge_id
+GROUP BY C.Contest_id, C.hacker_id, C.name,
+HAVING (S.total_accepted_submissions+S.total_submissions+V.total_views+V.total_unique_views)>0
+ORDER BY C.Contest_id 
+
+
+
+
